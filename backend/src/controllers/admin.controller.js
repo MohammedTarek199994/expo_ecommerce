@@ -12,7 +12,9 @@ export async function createProduct(req, res) {
     }
 
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: "At least one image is required" });
+      return res
+        .status(400)
+        .json({ message: "At least one image is required" });
     }
 
     if (req.files.length > 3) {
@@ -136,7 +138,9 @@ export async function updateOrderStatus(req, res) {
 
     await order.save();
 
-    res.status(200).json({ message: "Order status updated successfully", order });
+    res
+      .status(200)
+      .json({ message: "Order status updated successfully", order });
   } catch (error) {
     console.error("Error in updateOrderStatus controller:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -153,7 +157,7 @@ export async function getAllCustomers(_, res) {
   }
 }
 
-export async function getDashboardStats(_, res) {
+export async function getDashboardStats(req, res) {
   try {
     const totalOrders = await Order.countDocuments();
 
@@ -196,7 +200,8 @@ export const deleteProduct = async (req, res) => {
     if (product.images && product.images.length > 0) {
       const deletePromises = product.images.map((imageUrl) => {
         // Extract public_id from URL (assumes format: .../products/publicId.ext)
-        const publicId = "products/" + imageUrl.split("/products/")[1]?.split(".")[0];
+        const publicId =
+          "products/" + imageUrl.split("/products/")[1]?.split(".")[0];
         if (publicId) return cloudinary.uploader.destroy(publicId);
       });
       await Promise.all(deletePromises.filter(Boolean));
